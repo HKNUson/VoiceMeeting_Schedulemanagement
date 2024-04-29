@@ -1,37 +1,79 @@
-body {
-    /* Main */
-    position: relative;
-    overflow-y: scroll;
-    background: #3E3E3E;
-}
-
-p.logo {
+#logo {
     /* Discord */
-
-    position: absolute;
-    left: 60px;
-    margin-top: 20px;
-
-    font-family: 'Inter';
-    font-style: italic;
-    font-weight: 900;
+    
+    font-style: bold;
+    font-weight: 1000;
     font-size: 42px;
 
-    color: #7982DA;
+    color: #7989DA;
 }
 
-p.login {
-    /* login */
-    position: absolute;
-    width: 140px;
-    height: 40px;
-    right: 60px;
-    margin-top: 30px;
+#login {
+    /* login-box */
 
-    background: #7289DA;
-    border-radius: 30px;
+    width: 150px;
+    height: 44px;
 
-    text-align: center;
-    font-size: 20px;
     color: #ffffff;
+    background: #7289DA;
+    border: 0;
+    border-radius: 30px;
+    
+    font-style: bold;
+    font-weight: 1000;
+    font-size: 22px;
+    transition: 0.5s ease-in-out;
+}
+
+#login:hover {
+    filter: opacity(85%);
+}
+
+#leftBar {
+    /* left bar nav-item */
+
+    width: 65px;
+    height: 65px;
+
+    background: #313338;
+    text-align: center;
+    border-radius: 45%;
+    margin-top: 10px;
+
+    transition: 0.5s;
+
+    img {
+        margin-top: 7.5px;
+        width: 50px;
+        height: 50px;
+
+        transition: 0.5s;
+    }
+}
+
+#leftBar:hover {
+    width: 75px;
+    height: 75px;
+
+    img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+#calendar {
+    /* calendar box */
+
+    min-height: 600px;
+    background: #313338;
+    margin-right: 20px;
+    border-radius: 5%;
+}
+
+#planner {
+    /* planner box */
+
+    background: #313338;
+    border-radius: 5%;
+    margin-right: 59px
 }
