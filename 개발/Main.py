@@ -1,76 +1,72 @@
-import discord
+import discord  # py-cord 사용
 from discord.ext import commands
-def load_opus():    # 내 pc가 opus를 못읽어서 따로 추가했음
-    if not discord.opus.is_loaded():
-        # libopus.dylib의 경로를 지정합니다.
-        discord.opus.load_opus('/opt/homebrew/lib/libopus.dylib')
-load_opus()
+import os
 
 import Token
 import MySink
-import Encoding as ec
+import Encoding
+
+## PC가 Opus를 못읽어서 별도작성
+def load_opus():
+    if not discord.opus.is_loaded():
+        discord.opus.load_opus('/opt/homebrew/lib/libopus.dylib')
+load_opus()
+
 
 ## 봇 설정
 TOKEN = Token.DISCORD_TOKEN
-bot = commands.Bot(command_prefix='!', intents= discord.Intents.all())
+bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 
-
-## on되면 콘솔창에 봇 이름 출력
+## 봇이 준비되면 콘솔에 메시지 출력
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} 디스코드 연결 완료!')
 
 
-## 명령어 잘 먹히는지 테스트
+## 명령어가 잘 먹히는지 테스트할려고 만듬
 @bot.command(name='안녕')
 async def hello(ctx):
     await ctx.send('반가워~')
 
 
-## 음성채널에 들어가서 음성 녹음을 시작
+## 음성 녹음 시작
 @bot.command(name='음성녹음시작')
-async def joinAndRecordStart(ctx):
-    if ctx.author.voice and ctx.author.voice.channel:
-        vc = await ctx.author.voice.channel.connect()
-        sink = MySink.CustomAudioSink()
-        vc.start_recording(sink, finished_callback, ctx)
-        await ctx.send('음성 녹음을 시작합니다.')
-    else:
-        await ctx.send('우선 음성 채널에 입장해주세요.')
+async def start(ctx):
+    # 사용자가 음성채널에 존재하는지 확인
+    if ctx.author.voice is None:
+        await ctx.send("음성 채널에 먼저 들어가세요.")
+        return
+    
+    # 사용자가 있는 음성채널에 연결하고 녹음 시작
+    channel = ctx.author.voice.channel
+    voice_client = await channel.connect()
+    voice_client.start_recording(MySink.RecordingSink(), finished_callback, ctx)
+    await ctx.send("음성 녹음을 시작합니다.")
 
-async def finished_callback(sink, ctx):
-    audio_data = sink.get_all_audio()
-    if not audio_data.closed:
-        output_filename = "combined_recorded_audio.flac"
-        encoded_file_path = ec.encode_audio(audio_data, output_filename)
-        await ctx.send(file=discord.File(encoded_file_path, filename=output_filename))
-        audio_data.close()
-    else:
-        print("Error: Trying to access a closed file.")
-    
-    # all_audio_files = sink.get_all_audio()
-    # for audio_file in all_audio_files:
-    #     if not audio_file.closed:  # 스트림이 닫혀 있지 않은지 확인
-    #         output_filename = "recorded_audio.mp3"
-    #         encoded_file_path = ec.encode_audio(audio_file, output_filename)
-    #         # 인코딩된 파일을 디스코드 채널에 전송
-    #         await ctx.send(file=discord.File(encoded_file_path, filename=output_filename))
-    #         audio_file.close()  # 파일 처리 후 스트림 닫기
-    #     else:
-    #         print("Error: Trying to access a closed file.")  # 스트림이 닫혔을 경우 로그 출력
-    
-    
-## 음성 녹음을 종료하고 음성 채널에서 퇴장
+
+## 음성 녹음 종료
 @bot.command(name='음성녹음종료')
-async def recordStopAndLeave(ctx):
-    vc = ctx.guild.voice_client
-    if vc and vc.is_connected():
-        vc.stop_recording()
-        await ctx.send('음성 녹음을 종료합니다.')
-        await vc.disconnect()
-        await ctx.send('음성 채널에서 퇴장했습니다.')
-    else:
-        await ctx.send('봇이 음성 채널에 입장하지 않았습니다.')
+async def stop(ctx):
+    voice_client = ctx.guild.voice_client
+    
+    # 봇이 음성채널에 있는지 확인
+    if not voice_client or not voice_client.is_connected():
+        await ctx.send("봇이 음성 채널에 연결되어 있지 않습니다.")
+        return
 
+    voice_client.stop_recording()   # 녹음 중지
+    await ctx.send("음성 녹음을 종료합니다.")
+    await voice_client.disconnect() # 봇이 음성채널에서 퇴장
+
+## 녹음 종료 시 호출되는 콜백 함수
+async def finished_callback(sink, ctx):
+    raw_audio_files = sink.get_finished_audio_files()   # 녹음된 파일
+    flac_file = Encoding.convert_to_flac(raw_audio_files)   # .flac로 변환
+    
+    # 현재는 디스코드에 파일을 올리도록 했는데
+    # 음성인식으로 넘어가도록 할 예정
+    await ctx.send(file=discord.File(flac_file))
+    for file in raw_audio_files:
+        os.remove(file)
 
 bot.run(TOKEN)
