@@ -16,6 +16,55 @@
 
     // 공휴일 배열을 이벤트로 변환할 함수
     function getHolidayEvents(year, month) {
+      var Mon_day;
+
+      let events = [];
+      for (let j = 1; j <= 12; j++) {
+        //월마다 공휴일 구하기
+        if (j < 10) {
+          j = '0' + j;
+        }
+
+        Mon_day = day_max(j);
+        for (let i = 1; i <= Mon_day; i++) {
+          let Holiday;
+          if (i < 10) {
+            Holiday = year + '' + j + '0' + i;
+          } else {
+            Holiday = year + '' + j + i;
+          }
+
+          var days = [];
+          if (isHoliday(Holiday) != null) {
+            if (i < 10) {
+              days[0] = year + '-' + j + '-' + '0' + i;
+            } else {
+              days[0] = year + '-' + j + '-' + i;
+            }
+
+            days[1] = isHoliday(Holiday);
+            console.log(days);
+            events.push({
+              title: days[1],
+              start: days[0],
+              display: 'background',
+              backgroundColor: '#ffc4c4',
+              borderColor: '#ffc4c4',
+              color: 'ff008c',
+            });
+            // Holis 배열에 추가
+            Holis.push([days[0], days[1]]);
+          }
+        }
+      }
+
+      return events;
+    }
+
+    function day_max(month) {
+      var Today = new Date();
+      var year = Today.getFullYear();
+
       var Mon_day = 30;
       if (
         month == 1 ||
@@ -34,39 +83,7 @@
           Mon_day = 28;
         }
       }
-
-      let events = [];
-      for (let i = 1; i <= Mon_day; i++) {
-        let Holiday;
-        if (i < 10) {
-          Holiday = year + '' + month + '0' + i;
-        } else {
-          Holiday = year + '' + month + i;
-        }
-
-        var days = [];
-        if (isHoliday(Holiday) != null) {
-          if (i < 10) {
-            days[0] = year + '-' + month + '-' + '0' + i;
-          } else {
-            days[0] = year + '-' + month + '-' + i;
-          }
-
-          days[1] = isHoliday(Holiday);
-          console.log(days);
-          events.push({
-            title: days[1],
-            start: days[0],
-            display: 'background',
-            backgroundColor: '#F7A8A8',
-            borderColor: '#F7A8A8',
-            textColor: '#E00606',
-          });
-          // Holis 배열에 추가
-          Holis.push([days[0], days[1]]);
-        }
-      }
-      return events;
+      return Mon_day;
     }
 
     // full-calendar 생성하기
