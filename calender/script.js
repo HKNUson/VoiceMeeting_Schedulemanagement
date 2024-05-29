@@ -11,6 +11,64 @@
 
     console.log(DateString);
 
+    // 공휴일 배열을 전역 변수로 정의
+    var Holis = [];
+
+    // 공휴일 배열을 이벤트로 변환할 함수
+    function getHolidayEvents(year, month) {
+      var Mon_day = 30;
+      if (
+        month == 1 ||
+        month == 3 ||
+        month == 5 ||
+        month == 7 ||
+        month == 8 ||
+        month == 10 ||
+        month == 12
+      ) {
+        Mon_day = 31;
+      } else if (month == 2) {
+        if (year % 4 == 0) {
+          Mon_day = 29;
+        } else {
+          Mon_day = 28;
+        }
+      }
+
+      let events = [];
+      for (let i = 1; i <= Mon_day; i++) {
+        let Holiday;
+        if (i < 10) {
+          Holiday = year + '' + month + '0' + i;
+        } else {
+          Holiday = year + '' + month + i;
+        }
+
+        var days = [];
+        if (isHoliday(Holiday) != null) {
+          if (i < 10) {
+            days[0] = year + '-' + month + '-' + '0' + i;
+          } else {
+            days[0] = year + '-' + month + '-' + i;
+          }
+
+          days[1] = isHoliday(Holiday);
+          console.log(days);
+          events.push({
+            title: days[1],
+            start: days[0],
+            display: 'background',
+            backgroundColor: '#F7A8A8',
+            borderColor: '#F7A8A8',
+            textColor: '#E00606',
+          });
+          // Holis 배열에 추가
+          Holis.push([days[0], days[1]]);
+        }
+      }
+      return events;
+    }
+
     // full-calendar 생성하기
     var calendar = new FullCalendar.Calendar(calendarEl, {
       height: '700px', // calendar 높이 설정
@@ -24,7 +82,6 @@
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       },
       initialView: 'dayGridMonth', // 초기 로드 될때 보이는 캘린더 화면(기본 설정: 달)
-
       initialDate: DateString, // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)
       navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
       editable: true, // 수정 가능?
@@ -32,6 +89,7 @@
       nowIndicator: true, // 현재 시간 마크
       dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
       locale: 'ko', // 한국어 설정
+      events: getHolidayEvents(Year, Month), // 공휴일 이벤트 추가
       eventAdd: function (obj) {
         // 이벤트가 추가되면 발생하는 이벤트
         console.log(obj);
@@ -57,31 +115,18 @@
         }
         calendar.unselect();
       },
-      // 이벤트
-      events: [],
-      Holis: [],
+      dayCellDidMount: function (info) {
+        var date = info.date;
+        var dateString = date.toISOString().split('T')[0];
+
+        // 공휴일 체크
+        Holis.forEach(function (holiday) {
+          if (holiday[0] === dateString) {
+            info.el.classList.add('holiday'); // 특정 날짜 셀에 'holiday' 클래스 추가
+          }
+        });
+      },
     });
-
-    //월 별 일수 계산
-    var Mon_day = 30;
-    if (Month == 1 || 3 || 5 || 7 || 8 || 10 || 12) {
-      Mon_day = 31;
-    } else if (Month == 2) {
-      if (Year % 4 == 0) {
-        Mon_day = 29;
-      } else {
-        Mon_day = 28;
-      }
-    }
-
-    //공휴일 이벤트 추가
-    for (i = 1; i <= Mon_day; i++) {
-      var Holiday = Year + Month + Day;
-      if (isHoliday(Holiday) == true) {
-        Holis.push(Year + '-' + Month + '-' + Day);
-        events.push(Year + '-' + Month + '-' + Day);
-      }
-    }
 
     // 캘린더 랜더링
     calendar.render();
@@ -100,10 +145,13 @@
  *
  * @param string
  */
+
 function isHoliday(yyyymmdd) {
   // 검사년도
   var yyyy = yyyymmdd.substring(0, 4);
   var holidays = new Array();
+  var event; //반환값
+
   // 음력 공휴일을 양력으로 바꾸어서 입력
   var tmp01 = lunerCalenderToSolarCalenger(yyyy + '0101'); // 음력설날
   var tmp02 = lunerCalenderToSolarCalenger(yyyy + '0815'); // 음력추석
@@ -126,7 +174,68 @@ function isHoliday(yyyymmdd) {
   holidays[14] = yyyy + '1225'; // 성탄절
   for (var i = 0; i < holidays.length; i++) {
     if (holidays[i] == yyyymmdd) {
-      return true;
+      switch (i) {
+        case 0:
+          event = '설 연휴';
+          return event;
+
+        case 1:
+          event = '설 연휴';
+          return event;
+
+        case 2:
+          event = '설 연휴';
+          return event;
+
+        case 3:
+          event = '추석 연휴';
+          return event;
+
+        case 4:
+          event = '추석 연휴';
+          return event;
+
+        case 5:
+          event = '추석 연휴';
+          return event;
+
+        case 6:
+          event = '석가탄신일';
+          return event;
+
+        case 7:
+          event = '새해 첫 날';
+          return event;
+
+        case 8:
+          event = '삼일절';
+          return event;
+
+        case 9:
+          event = '식목일';
+          return event;
+
+        case 10:
+          event = '어린이날';
+          return event;
+
+        case 11:
+          event = '현충일';
+          return event;
+
+        case 12:
+          event = '광복절';
+          return event;
+
+        case 13:
+          event = '개천절';
+          return event;
+
+        case 14:
+          event = '성탄절';
+          return event;
+      }
+      return null;
     }
   }
 }
