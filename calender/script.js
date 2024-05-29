@@ -15,45 +15,47 @@
     var Holis = [];
 
     // 공휴일 배열을 이벤트로 변환할 함수
-    function getHolidayEvents(year, month) {
+    function getHolidayEvents() {
       var Mon_day;
 
       let events = [];
-      for (let j = 1; j <= 12; j++) {
-        //월마다 공휴일 구하기
-        if (j < 10) {
-          j = '0' + j;
-        }
-
-        Mon_day = day_max(j);
-        for (let i = 1; i <= Mon_day; i++) {
-          let Holiday;
-          if (i < 10) {
-            Holiday = year + '' + j + '0' + i;
-          } else {
-            Holiday = year + '' + j + i;
+      for (let k = 2000; k <= 2043; k++) {
+        year = k;
+        for (let j = 1; j <= 12; j++) {
+          //월마다 공휴일 구하기
+          if (j < 10) {
+            j = '0' + j;
           }
 
-          var days = [];
-          if (isHoliday(Holiday) != null) {
+          Mon_day = day_max(j);
+          for (let i = 1; i <= Mon_day; i++) {
+            let Holiday;
             if (i < 10) {
-              days[0] = year + '-' + j + '-' + '0' + i;
+              Holiday = year + '' + j + '0' + i;
             } else {
-              days[0] = year + '-' + j + '-' + i;
+              Holiday = year + '' + j + i;
             }
 
-            days[1] = isHoliday(Holiday);
-            console.log(days);
-            events.push({
-              title: days[1],
-              start: days[0],
-              display: 'background',
-              backgroundColor: '#ffc4c4',
-              borderColor: '#ffc4c4',
-              color: 'ff008c',
-            });
-            // Holis 배열에 추가
-            Holis.push([days[0], days[1]]);
+            var days = [];
+            if (isHoliday(Holiday) != null) {
+              if (i < 10) {
+                days[0] = year + '-' + j + '-' + '0' + i;
+              } else {
+                days[0] = year + '-' + j + '-' + i;
+              }
+
+              days[1] = isHoliday(Holiday);
+              events.push({
+                title: days[1],
+                start: days[0],
+                display: 'background',
+                backgroundColor: '#ffc4c4',
+                borderColor: '#ffc4c4',
+                color: 'ff008c',
+              });
+              // Holis 배열에 추가
+              Holis.push([days[0], days[1]]);
+            }
           }
         }
       }
@@ -106,7 +108,7 @@
       nowIndicator: true, // 현재 시간 마크
       dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
       locale: 'ko', // 한국어 설정
-      events: getHolidayEvents(Year, Month), // 공휴일 이벤트 추가
+      events: getHolidayEvents(), // 공휴일 이벤트 추가
       eventAdd: function (obj) {
         // 이벤트가 추가되면 발생하는 이벤트
         console.log(obj);
