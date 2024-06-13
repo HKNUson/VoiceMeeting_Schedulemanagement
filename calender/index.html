@@ -14,17 +14,27 @@
       href="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="script.css" />
+    <link rel="stylesheet" href="calendar.css" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js"></script>
     <!-- fullcalendar 언어 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js"></script>
     <style src="style.css"></style>
   </head>
+
   <body style="padding: 30px">
-    <!-- calendar 태그 -->
-    <div id="calendar-container">
-      <div id="calendar"></div>
+    <script src="schedule.js"></script>
+    <script src="calendar.js"></script>
+    <div>
+      <!-- calendar 태그 -->
+      <div id="calendar-container">
+        <div id="calendar"></div>
+      </div>
+
+      <!-- schedule 태그 -->
+      <div id="schedule-container">
+        <span id="month"> </span>
+      </div>
     </div>
-    <script src="script.js"></script>
+    <br />
   </body>
 </html>

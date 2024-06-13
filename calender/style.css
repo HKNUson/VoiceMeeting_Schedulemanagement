@@ -1,14 +1,56 @@
 /* style.css */
+@font-face {
+  font-family: 'JalnanGothic';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: '양진체';
+  src: url('https://fastly.jsdelivr.net/gh/supernovice-lab/font@0.9/yangjin.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MangoDdobak-B';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/MangoDdobak-B.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
 html,
 body {
-  background-color: #1e1f22;
   overflow: hidden;
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
+  overflow: scroll;
+  font-family: 'MangoDdobak-B';
 }
 
 .fc-header-toolbar {
   padding-top: 1em;
   padding-left: 1em;
   padding-right: 1em;
+}
+
+#schedule-container {
+  border: 1px solid #e4e4e4ea;
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 20px;
+}
+
+#month {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+#sc-btn {
+  display: block;
+  padding: 100px;
 }
