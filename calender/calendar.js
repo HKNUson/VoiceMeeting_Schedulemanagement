@@ -3,7 +3,7 @@ var events = [];
 var titles = [];
 var urlParams = new URLSearchParams(window.location.search);
 var myParam = urlParams.get('a');
-var preModifyTitle = "";
+var preModifyTitle = '';
 
 (function () {
   $(function () {
@@ -51,6 +51,7 @@ var preModifyTitle = "";
               }
 
               days[1] = isHoliday(Holiday);
+              console.log(Holiday);
 
               Holis.push({
                 title: days[1],
@@ -113,11 +114,11 @@ var preModifyTitle = "";
         e.dayNumberText = e.dayNumberText.replace('일', '');
       },
       locale: 'ko', // 한국어 설정
-      events: loadEvents(myParam), // 공휴일 이벤트 추가
-      
+      events: loadEvents(myParam),
+      events: getHolidayEvents().concat(events), // 공휴일 이벤트 추가
+
       eventAdd: function (obj) {
         // 이벤트가 추가되면 발생하는 이벤트
-
       },
       eventChange: function (obj) {
         // 이벤트가 수정되면 발생하는 이벤트
@@ -125,7 +126,7 @@ var preModifyTitle = "";
         removeEvent(obj);
         saveEvents(obj.event);
       },
-      eventClick: function(obj) {
+      eventClick: function (obj) {
         //이벤트 클릭 이벤트
         $('#addEventModalLabel').text('일정 수정');
         $('#submitBtn').text('수정');
@@ -161,22 +162,19 @@ var preModifyTitle = "";
             info.el.classList.add('holiday'); // 특정 날짜 셀에 'holiday' 클래스 추가
           }
         });
-      }
+      },
     });
 
     // 캘린더 랜더링
     calendar.render();
 
-
-    $('#deleteBtn').click(function() {
-      
-      if(confirm('일정을 삭제하시겠습니까?')) {
-        
+    $('#deleteBtn').click(function () {
+      if (confirm('일정을 삭제하시겠습니까?')) {
       } else {
         var historyEvents = loadEvents(myParam);
-        for(var i=0; i<historyEvents.length; i++) {
-          if(historyEvents[i].title == $('#subject').val()) {
-            historyEvents.splice(i,1);
+        for (var i = 0; i < historyEvents.length; i++) {
+          if (historyEvents[i].title == $('#subject').val()) {
+            historyEvents.splice(i, 1);
             myParam = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
           }
         }
@@ -184,11 +182,9 @@ var preModifyTitle = "";
 
       $('#addEventModal').modal('hide');
       location.reload(true);
-    })
+    });
 
-
-
-    $('#eventForm').submit(function(e) {
+    $('#eventForm').submit(function (e) {
       e.preventDefault();
 
       const subject = $('#subject').val();
@@ -196,43 +192,39 @@ var preModifyTitle = "";
       const end = $('#end').val();
 
       e = {
-            title: subject,
-            start: start,
-            end: end,
-            allDay: true,
-          };
-      if($('#submitBtn').text() == '저장') {
+        title: subject,
+        start: start,
+        end: end,
+        allDay: true,
+      };
+      if ($('#submitBtn').text() == '저장') {
         saveEvents(e);
         calendar.addEvent(e);
-      } else if($('#submitBtn').text() == '수정') {
+      } else if ($('#submitBtn').text() == '수정') {
         var historyEvents = loadEvents(myParam);
-        for(var i=0; i<historyEvents.length; i++) {
-          if(historyEvents[i].title == preModifyTitle) {
-            historyEvents.splice(i,1);
+        for (var i = 0; i < historyEvents.length; i++) {
+          if (historyEvents[i].title == preModifyTitle) {
+            historyEvents.splice(i, 1);
             myParam = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
             window.history.replaceState({}, null, '?a=' + myParam);
-            if(preModifyTitle != subject) {
+            if (preModifyTitle != subject) {
               saveEvents(e);
               calendar.addEvent(e);
             }
           }
         }
-        
       }
 
       $('#addEventModal').modal('hide');
       $('#subject').val('');
       location.reload(true);
     });
-
-    
   });
 })();
 
-
 // 이벤트를 DB화
 function saveEvents(event) {
-  if(myParam != null) {
+  if (myParam != null) {
     var historyEvents = loadEvents(myParam);
     historyEvents.push(event);
     var encodeEvents = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
@@ -242,25 +234,22 @@ function saveEvents(event) {
   }
   window.history.replaceState({}, null, '?a=' + encodeEvents);
   myParam = encodeEvents;
-  
-  console.log("성공");
-}
 
+  console.log('성공');
+}
 
 // url 복사
 function copyToClipBoard() {
-  var url = window.location.href
+  var url = window.location.href;
   console.log(url);
-  navigator.clipboard.writeText(url)
-    .then(() => {
-      console.log("복사 성공");
-    })
+  navigator.clipboard.writeText(url).then(() => {
+    console.log('복사 성공');
+  });
 }
-
 
 // url 디코딩
 function loadEvents(url) {
-  if(url != null) {
+  if (url != null) {
     var decodeEvents = JSON.parse(decodeURIComponent(atob(url)));
     return decodeEvents;
   } else {
@@ -268,19 +257,16 @@ function loadEvents(url) {
   }
 }
 
-
 // 이벤트 삭제
 function removeEvent(obj) {
   var historyEvents = loadEvents(myParam);
-  for(var i=0; i<historyEvents.length; i++) {
-    if(historyEvents[i].title == obj.oldEvent._def.title) {
-      historyEvents.splice(i,1);
+  for (var i = 0; i < historyEvents.length; i++) {
+    if (historyEvents[i].title == obj.oldEvent._def.title) {
+      historyEvents.splice(i, 1);
       myParam = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
     }
   }
 }
-
-
 
 function get_events() {
   YM[0] = Year;
