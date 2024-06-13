@@ -1,3 +1,7 @@
+var urlParams = new URLSearchParams(window.location.search);
+var myParam = urlParams.get('a');
+
+
 (function () {
   $(function () {
     // calendar element 취득
@@ -123,15 +127,11 @@
       },
       select: function (arg) {
         // 캘린더에서 드래그로 이벤트를 생성할 수 있다.
-        var title = prompt('Event Title:');
-        if (title) {
-          calendar.addEvent({
-            title: title,
-            start: arg.start,
-            end: arg.end,
-            allDay: arg.allDay,
-          });
-        }
+        $('#addEventModalLabel').text('일정 추가');
+        $('#submitBtn').text('저장');
+        $('#addEventModal').modal('show');
+        $('#start').val(arg.startStr);
+        $('#end').val(arg.endStr);
         calendar.unselect();
       },
       dayCellDidMount: function (info) {
@@ -149,8 +149,70 @@
 
     // 캘린더 랜더링
     calendar.render();
+
+    $('#eventForm').submit(function(e) {
+      e.preventDefault();
+
+      const subject = $('#subject').val();
+      const start = $('#start').val();
+      const end = $('#end').val();
+
+      e = {
+            title: subject,
+            start: start,
+            allDay: end,
+          };
+      saveEvents(e);
+      calendar.addEvent(e);
+
+      $('#addEventModal').modal('hide');
+      calendar.refetchEvents();
+      $('#subject').val('');
+    })
   });
 })();
+
+// 이벤트를 DB화
+function saveEvents(events) {
+  if(myParam != null) {
+    var historyEvents = loadEvents(myParam);
+    historyEvents.push(events);
+    var encodeEvents = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
+  } else {
+    var eventList = [events];
+    var encodeEvents = btoa(encodeURIComponent(JSON.stringify(eventList)));
+  }
+  window.history.pushState({}, null, '?a=' + encodeEvents);
+  myParam = encodeEvents;
+  
+  console.log("성공!");
+}
+
+
+// url 디코딩
+function loadEvents(url) {
+  if(url != null) {
+    var decodeEvents = JSON.parse(decodeURIComponent(atob(url)));
+    return decodeEvents;
+  } else {
+    return [];
+  }
+}
+
+
+// 이벤트 삭제
+function removeEvent(obj) {
+  var historyEvents = loadEvents(myParam);
+  for(var i=0; i<historyEvents.length; i++) {
+    if(historyEvents[i].title == obj.oldEvent._def.title) {
+      historyEvents.splice(i,1);
+      myParam = btoa(encodeURIComponent(JSON.stringify(historyEvents)));
+    }
+  }
+}
+
+
+
 
 // isHoliday에 날짜 년-월-일을 입력하여 공휴일인지 true / false 값을 return 받을 수 있다.
 

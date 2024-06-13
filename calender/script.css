@@ -1,16 +1,36 @@
 /* 일요일 날짜 빨간색 */
-.fc-day-sun a {
-  color: red;
+.fc-col-header-cell-cushion, .fc-daygrid-day-number {
   text-decoration: none;
 }
 
-/* 토요일 날짜 파란색 */
+.fc-scrollgrid-sync-inner > .fc-col-header-cell-cushion,
+.fc-day-mon .fc-daygrid-day-number,
+.fc-day-tue .fc-daygrid-day-number,
+.fc-day-wed .fc-daygrid-day-number,
+.fc-day-thu .fc-daygrid-day-number,
+.fc-day-fri .fc-daygrid-day-number {
+  color: black;
+}
+
+.fc-day-sun .fc-col-header-cell-cushion,
+.fc-day-sun a{
+  color : red;
+}
+
+.fc-day-sat .fc-col-header-cell-cushion,
 .fc-day-sat a {
-  color: blue;
-  text-decoration: none;
+  color : blue;
 }
 
 .holi_d a {
   color: red;
   text-decoration: none;
+}
+
+
+button#copy {
+  width: 80px;
+  height: 40px;
+  float: right;
+  margin-top: 10px;
 }
